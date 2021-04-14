@@ -43,6 +43,8 @@
     "jest-circus": "26.6.0",
     "jest-resolve": "26.6.0",
     "jest-watch-typeahead": "0.6.1",
+    "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
     "mini-css-extract-plugin": "0.11.3",
     "optimize-css-assets-webpack-plugin": "5.0.4",
     "pnp-webpack-plugin": "1.6.4",
@@ -76,6 +78,7 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
+    "build:dev": "dotenv -e .env.dev node scripts/build.js",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
@@ -153,5 +156,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "dotenv-cli": "^4.0.0"
   }
 }

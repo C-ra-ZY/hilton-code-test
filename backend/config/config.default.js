@@ -41,5 +41,13 @@ module.exports = (appInfo) => {
 		security: {
 			csrf: false,
 		},
+		static: {
+			prefix: "/",
+			dir: path.join(appInfo.baseDir, "app/public"),
+			dynamic: true,
+		},
+		jwt: {
+			secret: "123456",
+		},
 	};
 };

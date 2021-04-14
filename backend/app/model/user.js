@@ -4,8 +4,7 @@ module.exports = (app) => {
 
 	const UserSchema = new Schema(
 		{
-			// _id: Schema.Types.ObjectId,
-			userName: {type: String},
+			userName: {type: String, unique: true, index: true, required: true},
 			passwordHash: {type: String},
 			type: {type: String},
 			contactInfo: {type: String},

@@ -3,19 +3,20 @@ import ReactDOM from "react-dom";
 import "antd/dist/antd.css";
 import "./index.css";
 import App from "./App";
-import {Switch, Route, BrowserRouter} from "react-router-dom";
+import {Switch, Route, HashRouter, Redirect} from "react-router-dom";
 import NormalLoginForm from "./login";
 import RegistrationForm from "./register";
 import LoadMoreList from "./list";
+import Auth from "./auth";
 
 ReactDOM.render(
 	<React.StrictMode>
-		<BrowserRouter>
-			{/* <Route path="/" component={App} /> */}
+		<HashRouter>
+			<Redirect from="/" to="/list" />
 			<Route path="/login" component={NormalLoginForm} />
 			<Route path="/register" component={RegistrationForm} />
-			<Route path="/list" component={LoadMoreList} />
-		</BrowserRouter>
+			<Route path="/list" component={Auth(LoadMoreList)} />
+		</HashRouter>
 	</React.StrictMode>,
 	document.getElementById("root")
 );

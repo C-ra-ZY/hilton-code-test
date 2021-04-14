@@ -1,53 +1,7 @@
 import React, {useState, useCallback} from "react";
-import {
-	Form,
-	Input,
-	Cascader,
-	Select,
-	Row,
-	Col,
-	Checkbox,
-	Button,
-	AutoComplete,
-	Layout,
-} from "antd";
-import {fetchUrl} from "fetch";
-const {Header, Footer, Sider, Content} = Layout;
-const {Option} = Select;
-const residences = [
-	{
-		value: "zhejiang",
-		label: "Zhejiang",
-		children: [
-			{
-				value: "hangzhou",
-				label: "Hangzhou",
-				children: [
-					{
-						value: "xihu",
-						label: "West Lake",
-					},
-				],
-			},
-		],
-	},
-	{
-		value: "jiangsu",
-		label: "Jiangsu",
-		children: [
-			{
-				value: "nanjing",
-				label: "Nanjing",
-				children: [
-					{
-						value: "zhonghuamen",
-						label: "Zhong Hua Men",
-					},
-				],
-			},
-		],
-	},
-];
+import {Form, Input, message, Row, Col, Button, Layout} from "antd";
+import authFetch from "../ajax";
+const {Content} = Layout;
 const formItemLayout = {
 	labelCol: {
 		xs: {
@@ -84,8 +38,13 @@ const RegistrationForm = () => {
 	const formSubmit = useCallback(() => {
 		// console.log(form);
 		// form.submit();
-		fetchUrl(
-			"http://localhost:3000/user",
+		authFetch(
+			window.location.protocol +
+				"//" +
+				window.location.hostname +
+				":" +
+				window.location.port +
+				"/user",
 			{
 				method: "post",
 				headers: {
@@ -93,10 +52,13 @@ const RegistrationForm = () => {
 				},
 				payload: JSON.stringify(form.getFieldsValue()),
 			},
-			(err, data) => {
+			(err, {status}, data) => {
 				err && console.error(err);
-				console.log(data);
-				!err && window.history.pushState({}, "", "/login");
+				if (status === 409) {
+					message.warning("User name duplicated!");
+				} else {
+					!err && window.location.assign("/login");
+				}
 			}
 		);
 	}, [form]);
@@ -115,10 +77,6 @@ const RegistrationForm = () => {
 							form={form}
 							name="register"
 							onFinish={onFinish}
-							initialValues={{
-								residence: ["zhejiang", "hangzhou", "xihu"],
-								prefix: "86",
-							}}
 							scrollToFirstError
 						>
 							<Form.Item

@@ -15,3 +15,5 @@ typings/
 ~$terview-quiz.docx
 logs/
 log/
+public/
+build/

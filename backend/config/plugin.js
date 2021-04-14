@@ -9,3 +9,11 @@ exports.passport = {
 	enable: true,
 	package: "egg-passport",
 };
+exports.static = {
+	enable: true,
+	package: "egg-static",
+};
+exports.jwt = {
+	enable: true,
+	package: "egg-jwt",
+};

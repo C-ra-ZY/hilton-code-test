@@ -33,7 +33,8 @@ var sha512 = function (password, salt) {
 };
 
 function saltHashPassword(userpassword) {
-	var salt = genRandomString(16); /** Gives us salt of length 16 */
+	// var salt = genRandomString(16); /** Gives us salt of length 16 */
+	var salt = "123456";
 	return sha512(userpassword, salt);
 	/* console.log("UserPassword = " + userpassword);
 	console.log("Passwordhash = " + passwordData.passwordHash);
@@ -41,12 +42,29 @@ function saltHashPassword(userpassword) {
 }
 
 class ReservationController extends Controller {
-	async index() {
-		const {ctx} = this;
-		await ctx.model.User.find({}).cursor().pipe(ctx.res);
-		/* for await (const doc of ctx.model.User.find({})) {
-			ctx.response.res.write(JSON.stringify(doc));
-		} */
+	async login() {
+		const {ctx, app} = this; // post请求传来的参数
+		const {username, password} = ctx.request.body; // 判断数据库里面是否存在该用户
+		const user = (await ctx.model.User.find({userName: username})).find((e) => {
+			return e.passwordHash === saltHashPassword(password).passwordHash;
+		});
+
+		if (user) {
+			const token = app.jwt.sign(
+				{
+					name: user.userName,
+					type: user.type,
+					contactInfo: user.contactInfo,
+				},
+				app.config.jwt.secret
+			);
+			ctx.body = {
+				code: 200,
+				token,
+			};
+		} else {
+			ctx.status = 401;
+		}
 	}
 
 	async update() {
@@ -67,13 +85,17 @@ class ReservationController extends Controller {
 	async create() {
 		const {ctx} = this;
 		const {body: user} = ctx.request;
+		let exists = await ctx.model.User.findOne({usernName: user.nickname});
+		if (exists) {
+			ctx.status = 409;
+			return;
+		}
 		const User = ctx.model.User;
-		const newUser = new User({
-			type: "guest",
-			username: user.nickname,
-			ontactInfo: user.phone,
-			passwordHash: saltHashPassword(user.password).passwordHash,
-		});
+		const newUser = new User();
+		newUser.type = "guest";
+		newUser.userName = user.nickname;
+		newUser.contactInfo = user.phone;
+		newUser.passwordHash = saltHashPassword(user.password).passwordHash;
 		await newUser.save();
 		ctx.response.status = 204;
 	}

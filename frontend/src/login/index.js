@@ -1,12 +1,47 @@
-import {Form, Input, Button, Checkbox} from "antd";
+import React, {useState, useCallback} from "react";
+import {Form, Input, Button, Checkbox, message} from "antd";
 import {UserOutlined, LockOutlined} from "@ant-design/icons";
+import {Link} from "react-router-dom";
+import authFetch from "../ajax";
+import {Redirect} from "react-router-dom";
 import {Row, Col, Layout} from "antd";
 const {Header, Footer, Sider, Content} = Layout;
 
-const NormalLoginForm = () => {
-	const onFinish = (values) => {
-		console.log("Received values of form: ", values);
-	};
+const NormalLoginForm = (props) => {
+	const [form] = Form.useForm();
+	const doLogin = useCallback(() => {
+		authFetch(
+			window.location.protocol +
+				"//" +
+				window.location.hostname +
+				":" +
+				window.location.port +
+				"/login",
+			{
+				method: "post",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				payload: JSON.stringify(form.getFieldsValue()),
+			},
+			(err, {status}, data) => {
+				err && console.error(err);
+				if (status === 401) {
+					message.warning(
+						"Login failed, please check your username and password!"
+					);
+				} else {
+					localStorage.setItem("jwt", JSON.parse(data.toString()).token);
+					window.location.reload();
+				}
+			}
+		);
+	}, []);
+
+	let jwt = localStorage.getItem("jwt");
+	if (jwt) {
+		return <Redirect to={"/list"} />;
+	}
 
 	return (
 		<Layout style={{height: "100%"}}>
@@ -14,12 +49,13 @@ const NormalLoginForm = () => {
 				<Row justify="center" align="middle" style={{height: "100%"}}>
 					<Col span={12}>
 						<Form
-							name="normal_login"
+							form={form}
+							name="login"
 							className="login-form"
 							initialValues={{
 								remember: true,
 							}}
-							onFinish={onFinish}
+							// onFinish={onFinish}
 						>
 							<Form.Item
 								name="username"
@@ -54,10 +90,6 @@ const NormalLoginForm = () => {
 								<Form.Item name="remember" valuePropName="checked" noStyle>
 									<Checkbox>Remember me</Checkbox>
 								</Form.Item>
-
-								<a className="login-form-forgot" href="">
-									Forgot password
-								</a>
 							</Form.Item>
 
 							<Form.Item>
@@ -65,10 +97,12 @@ const NormalLoginForm = () => {
 									type="primary"
 									htmlType="submit"
 									className="login-form-button"
+									onClick={doLogin}
 								>
 									Log in
 								</Button>
-								Or <a href="/register">register now!</a>
+								{" Or "}
+								<Link to="/register">register now!</Link>
 							</Form.Item>
 						</Form>
 					</Col>
