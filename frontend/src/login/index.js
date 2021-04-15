@@ -1,31 +1,31 @@
-import React, { useState, useCallback } from "react";
-import { Form, Input, Button, Checkbox, message } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import React, {useCallback} from "react";
+import {Form, Input, Button, message, Row, Col, Layout} from "antd";
+import {UserOutlined, LockOutlined} from "@ant-design/icons";
+import {Link, Redirect} from "react-router-dom";
+
 import authFetch from "../ajax";
-import { Redirect } from "react-router-dom";
-import { Row, Col, Layout } from "antd";
-const { Header, Footer, Sider, Content } = Layout;
+
+const {Content} = Layout;
 
 const NormalLoginForm = (props) => {
 	const [form] = Form.useForm();
 	const doLogin = useCallback(() => {
 		authFetch(
 			window.location.protocol +
-			"//" +
-			window.location.hostname +
-			":" +
-			window.location.port +
-			"/login",
+				"//" +
+				window.location.hostname +
+				":" +
+				window.location.port +
+				"/login",
 			{
 				method: "post",
 				headers: {
 					"Content-Type": "application/json",
 				},
 				payload: JSON.stringify(form.getFieldsValue()),
-				doAuth: false
+				doAuth: false,
 			},
-			(err, { status }, data) => {
+			(err, {status}, data) => {
 				err && console.error(err);
 				if (status === 401) {
 					message.warning(
@@ -45,19 +45,11 @@ const NormalLoginForm = (props) => {
 	}
 
 	return (
-		<Layout style={{ height: "100%" }}>
+		<Layout style={{height: "100%"}}>
 			<Content>
-				<Row justify="center" align="middle" style={{ height: "100%" }}>
+				<Row justify="center" align="middle" style={{height: "100%"}}>
 					<Col span={12}>
-						<Form
-							form={form}
-							name="login"
-							className="login-form"
-							initialValues={{
-								remember: true,
-							}}
-						// onFinish={onFinish}
-						>
+						<Form form={form} name="login" className="login-form">
 							<Form.Item
 								name="username"
 								rules={[
@@ -87,11 +79,6 @@ const NormalLoginForm = (props) => {
 									placeholder="Password"
 								/>
 							</Form.Item>
-							<Form.Item>
-								<Form.Item name="remember" valuePropName="checked" noStyle>
-									<Checkbox>Remember me</Checkbox>
-								</Form.Item>
-							</Form.Item>
 
 							<Form.Item>
 								<Button
@@ -113,5 +100,4 @@ const NormalLoginForm = (props) => {
 	);
 };
 
-// ReactDOM.render(<NormalLoginForm />, mountNode);
 export default NormalLoginForm;

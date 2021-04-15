@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from "react";
-import { Form, Input, message, Row, Col, Button, Layout } from "antd";
+import React, {useCallback} from "react";
+import {Form, Input, message, Row, Col, Button, Layout} from "antd";
 
 import authFetch from "../ajax";
 
-const { Content } = Layout;
+const {Content} = Layout;
 
 const formItemLayout = {
 	labelCol: {
@@ -39,15 +39,13 @@ const tailFormItemLayout = {
 const RegistrationForm = () => {
 	const [form] = Form.useForm();
 	const formSubmit = useCallback(() => {
-		// console.log(form);
-		// form.submit();
 		authFetch(
 			window.location.protocol +
-			"//" +
-			window.location.hostname +
-			":" +
-			window.location.port +
-			"/user",
+				"//" +
+				window.location.hostname +
+				":" +
+				window.location.port +
+				"/user",
 			{
 				method: "post",
 				headers: {
@@ -56,13 +54,12 @@ const RegistrationForm = () => {
 				doAuth: false,
 				payload: JSON.stringify(form.getFieldsValue()),
 			},
-			(err, { status }, data) => {
+			(err, {status}, data) => {
 				err && console.error(err);
 				if (status === 409) {
 					message.warning("User name duplicated!");
 				} else {
 					!err && window.location.assign(window.location.pathname + "#/login");
-
 				}
 			}
 		);
@@ -72,9 +69,9 @@ const RegistrationForm = () => {
 	};
 
 	return (
-		<Layout style={{ height: "100%" }}>
+		<Layout style={{height: "100%"}}>
 			<Content>
-				<Row justify="center" align="middle" style={{ height: "100%" }}>
+				<Row justify="center" align="middle" style={{height: "100%"}}>
 					<Col span={12}>
 						<Form
 							{...formItemLayout}
@@ -122,7 +119,7 @@ const RegistrationForm = () => {
 										required: true,
 										message: "Please confirm your password!",
 									},
-									({ getFieldValue }) => ({
+									({getFieldValue}) => ({
 										validator(_, value) {
 											if (!value || getFieldValue("password") === value) {
 												return Promise.resolve();

@@ -11,7 +11,7 @@ module.exports = (app) => {
 	router.delete("/reservation/:id", app.jwt, controller.reservation.delete);
 	router.post("/login", controller.user.login);
 	router.post("/user", controller.user.create);
-	router.put("/user", app.jwt, controller.user.update);
-	router.delete("/user", app.jwt, controller.user.delete);
+	// router.put("/user", app.jwt, controller.user.update);
+	// router.delete("/user", app.jwt, controller.user.delete);
 	router.redirect('/','/index.html')
 };
