@@ -1,24 +1,33 @@
-const LocalStrategy = require("passport-local").Strategy;
+// app.js
 
-module.exports = (app) => {
-	/* app.passport.use(
-		new LocalStrategy(
-			{
-				passReqToCallback: true,
-			},
-			(req, username, password, done) => {
-				// format user
-				const user = {
-					provider: "local",
-					username,
-					password,
-				};
-				app.passport.doVerify(req, user, done);
-			}
-		)
-	);
 
-	app.passport.verify(async (ctx, user) => {});
-	app.passport.serializeUser(async (ctx, user) => {});
-	app.passport.deserializeUser(async (ctx, user) => {}); */
-};
+class AppBootHook {
+	constructor(app) {
+		this.app = app;
+	}
+
+	configWillLoad() {
+	}
+
+	async didLoad() {
+	}
+
+	async willReady() {
+		await this.app.model.User.findOrCreate({
+			userName: "admin",
+		}, {
+			userName: "admin",
+			passwordHash: this.app.saltHashPassword("admin").passwordHash,
+			type: "employee",
+			contactInfo: "admin"
+		});
+	}
+
+	async didReady() {
+	}
+
+	async serverDidReady() {
+	}
+}
+
+module.exports = AppBootHook;

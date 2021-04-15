@@ -1,28 +1,26 @@
-import React, {useState, useEffect, useCallback} from "react";
-import "./index.css";
-import {parseJwt} from "../auth";
-
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
-	List,
-	Avatar,
+	Table,
 	Button,
 	message,
 	Layout,
 	Row,
 	Col,
 	Popconfirm,
+	Space
 } from "antd";
-import {QuestionCircleOutlined} from "@ant-design/icons";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 import * as moment from "moment";
-import {cloneDeep} from "lodash";
+import { cloneDeep } from "lodash";
 
 import authFetch from "../ajax";
-
+import { parseJwt } from "../auth";
 import Detail from "./detail";
 import Logout from "../logout";
 
-const {Header, Footer, Sider, Content} = Layout;
-const count = 3;
+import "./index.css";
+
+const { Content } = Layout;
 const fakeDataUrl =
 	window.location.protocol +
 	"//" +
@@ -35,9 +33,80 @@ const LoadMoreList = () => {
 	const [state, setState] = useState({
 		loading: false,
 		list: [],
+		pagination: {
+			current: 1,
+			pageSize: 10,
+		},
 	});
 	const jwtObj = parseJwt(localStorage.getItem("jwt"));
 
+	const columns = useMemo(() => {
+		return [
+			{
+				title: 'Guest Name',
+				dataIndex: 'guestName',
+				key: 'guestName',
+				sorter: true,
+				width: '20%',
+			},
+			{
+				title: 'Arrival Time',
+				dataIndex: 'arrivalTime',
+				key: 'arrivalTime',
+				render: (arrivalTime) => new moment(arrivalTime).format("yyyy-MM-DD HH:mm"),
+				sorter: true,
+				width: '20%',
+			},
+			{
+				title: 'Table Size',
+				dataIndex: 'tableSize',
+				key: 'tableSize',
+				sorter: true,
+				width: '20%',
+			},
+			{
+				title: 'Status',
+				dataIndex: 'status',
+				key: 'status',
+				sorter: true,
+				width: '20%',
+			},
+			{
+				title: 'Action',
+				key: 'action',
+				render: (text, record) => (
+					<Space size="middle">
+						<a
+							disabled={
+								jwtObj.type !== "employee" &&
+								(record.status == "Cancelled" ||
+									record.status == "Completed")
+							}
+							key="list-loadmore-edit"
+							onClick={() => {
+								actionBind(cloneDeep(record));
+							}}
+						>edit</a>
+						<Popconfirm
+							title="Are you sure？"
+							icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+							onConfirm={cancelConfirm(record)}
+						>
+							<a
+								href="#"
+								disabled={
+									jwtObj.type === "employee" ||
+									record.status == "Cancelled" ||
+									record.status == "Completed"
+								}
+								key="list-loadmore-more"
+							>cancel</a>
+						</Popconfirm>
+					</Space>
+				),
+			},
+		]
+	}, [state.data]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 
 	const [modalData, setModaldata] = useState({});
@@ -46,12 +115,13 @@ const LoadMoreList = () => {
 	}, []);
 
 	const getData = useCallback((callback) => {
-		setState({...state, loading: true});
+		setState({ ...state, loading: true });
 		authFetch(
 			fakeDataUrl,
 			{
 				method: "get",
 				contentType: "application/json",
+				doAuth: true,
 				// "Accept-Encoding": "gzip, deflate, br",
 			},
 			(err, status, data) => {
@@ -61,15 +131,16 @@ const LoadMoreList = () => {
 					);
 				!err &&
 					setState({
+						...state,
 						loading: false,
-						list: JSON.parse(data.toString()),
+						list: data
 					});
 			}
 		);
 	}, []);
 
 	const actionBind = useCallback((item) => {
-		setModaldata({...item});
+		setModaldata({ ...item });
 		setIsModalVisible(true);
 	}, []);
 	const cancelConfirm = useCallback((item) => {
@@ -78,6 +149,7 @@ const LoadMoreList = () => {
 				fakeDataUrl + "/" + item._id,
 				{
 					method: "delete",
+					doAuth: true,
 				},
 				(err, status, data) => {
 					err && console.error(err);
@@ -86,79 +158,34 @@ const LoadMoreList = () => {
 			);
 		};
 	}, []);
-	const {loading, list} = state;
 
 	return (
-		<Layout style={{height: "100%"}}>
+		<Layout style={{ height: "100%" }}>
 			<Content>
-				<Row justify="center" align="middle" style={{height: "60vh"}}>
+				<Row justify="center" align="middle" style={{ height: "60vh" }}>
 					<Col span={12}>
-						<List
-							className="demo-loadmore-list"
-							loading={loading}
-							itemLayout="horizontal"
-							dataSource={list}
-							renderItem={(item) => (
-								<List.Item
-									actions={[
-										<a
-											disabled={
-												jwtObj.type !== "employee" &&
-												(item.status == "Cancelled" ||
-													item.status == "Completed")
-											}
-											key="list-loadmore-edit"
-											onClick={() => {
-												actionBind(cloneDeep(item));
-											}}
-										>
-											edit
-										</a>,
-										<Popconfirm
-											title="Are you sure？"
-											icon={<QuestionCircleOutlined style={{color: "red"}} />}
-											onConfirm={cancelConfirm(item)}
-										>
-											<a
-												href="#"
-												disabled={
-													jwtObj.type === "employee" ||
-													item.status == "Cancelled" ||
-													item.status == "Completed"
-												}
-												key="list-loadmore-more"
-											>
-												cancel
-											</a>
-										</Popconfirm>,
-									]}
-								>
-									<List.Item.Meta
-										title={new moment(item.arrivalTime).format(
-											"yyyy-MM-DD HH:mm"
-										)}
-									/>
-									<List.Item.Meta title={item.guestName} />
-									<List.Item.Meta title={item.tableSet} />
-									<List.Item.Meta title={item.status} />
-								</List.Item>
-							)}
+						<Table
+							columns={columns}
+							rowKey={record => record._id}
+							dataSource={state.list}
+							pagination={state.pagination}
+							loading={state.loading}
 						/>
 					</Col>
 				</Row>
-				<Row justify="center" align="middle" style={{height: "15vh"}}>
-					<Col span={4}>
+				<Row justify="center" align="middle" style={{ height: "15vh" }}>
+					<Col span={4} style={{ display: "flex", justifyContent: 'center' }}>
 						<Button
 							type="primary"
 							disabled={jwtObj.type === "employee"}
 							onClick={() => {
-								actionBind({create: true});
+								actionBind({ create: true });
 							}}
 						>
 							New Reservation
 						</Button>
 					</Col>
-					<Col span={4}>
+					<Col span={4} style={{ display: "flex", justifyContent: 'center' }}>
 						<Logout />
 					</Col>
 				</Row>
@@ -168,12 +195,11 @@ const LoadMoreList = () => {
 					isModalVisible={isModalVisible}
 					setIsModalVisible={setIsModalVisible}
 					reloadList={getData}
-					data={{...modalData}}
+					data={{ ...modalData }}
 				/>
 			)}
 		</Layout>
 	);
 };
 
-// ReactDOM.render(<LoadMoreList />, mountNode);
 export default LoadMoreList;

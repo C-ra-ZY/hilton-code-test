@@ -1,4 +1,4 @@
-import React, {useCallback, useState, useEffect} from "react";
+import React, { useCallback, useState } from "react";
 import {
 	Modal,
 	Select,
@@ -10,9 +10,9 @@ import {
 } from "antd";
 import * as moment from "moment";
 import authFetch from "../ajax";
-import {parseJwt} from "../auth";
+import { parseJwt } from "../auth";
 
-const {Option} = Select;
+const { Option } = Select;
 
 const formItemLayout = {
 	labelCol: {
@@ -34,11 +34,11 @@ const formItemLayout = {
 };
 const Detail = (props) => {
 	const jwtObj = parseJwt(localStorage.getItem("jwt"));
-	const {reloadList} = props;
+	const { reloadList } = props;
 	const {
 		isModalVisible,
 		setIsModalVisible,
-		data: {create},
+		data: { create },
 	} = props;
 	const [data, setData] = useState({
 		arrivalTime: props.data.arrivalTime
@@ -69,49 +69,50 @@ const Detail = (props) => {
 	};
 	const guestNameOnChange = useCallback(
 		(userNameEvt) => {
-			setData({...data, guestName: userNameEvt.currentTarget.value});
+			setData({ ...data, guestName: userNameEvt.currentTarget.value });
 		},
 		[data]
 	);
 	const contactInfoOnChange = useCallback(
 		(contactInfoEvt) => {
-			setData({...data, contactInfo: contactInfoEvt.currentTarget.value});
+			setData({ ...data, contactInfo: contactInfoEvt.currentTarget.value });
 		},
 		[data]
 	);
 
 	const timerOnChange = useCallback(
 		(newTime) => {
-			setData({...data, arrivalTime: newTime});
+			setData({ ...data, arrivalTime: newTime });
 		},
 		[data]
 	);
 	const dateOnChange = useCallback(
 		(newTime) => {
-			setData({...data, arrivalTime: newTime});
+			setData({ ...data, arrivalTime: newTime });
 		},
 		[data]
 	);
 	const tableSizeOnChange = useCallback(
 		(size) => {
-			setData({...data, tableSize: size});
+			setData({ ...data, tableSize: size });
 		},
 		[data]
 	);
 	const handleOk = useCallback(() => {
 		authFetch(
 			window.location.protocol +
-				"//" +
-				window.location.hostname +
-				":" +
-				window.location.port +
-				"/reservation" +
-				`${create ? "" : "/" + props.data._id}`,
+			"//" +
+			window.location.hostname +
+			":" +
+			window.location.port +
+			"/reservation" +
+			`${create ? "" : "/" + props.data._id}`,
 			{
 				method: create ? "post" : "put",
 				headers: {
 					"Content-Type": "application/json",
 				},
+				doAuth: true,
 				payload: JSON.stringify({
 					...data,
 					operatorName: jwtObj.name,
@@ -146,7 +147,7 @@ const Detail = (props) => {
 
 	const handleSelectChange = useCallback(
 		(status) => {
-			setData({...data, status});
+			setData({ ...data, status });
 		},
 		[data]
 	);

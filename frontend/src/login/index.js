@@ -1,37 +1,38 @@
-import React, {useState, useCallback} from "react";
-import {Form, Input, Button, Checkbox, message} from "antd";
-import {UserOutlined, LockOutlined} from "@ant-design/icons";
-import {Link} from "react-router-dom";
+import React, { useState, useCallback } from "react";
+import { Form, Input, Button, Checkbox, message } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 import authFetch from "../ajax";
-import {Redirect} from "react-router-dom";
-import {Row, Col, Layout} from "antd";
-const {Header, Footer, Sider, Content} = Layout;
+import { Redirect } from "react-router-dom";
+import { Row, Col, Layout } from "antd";
+const { Header, Footer, Sider, Content } = Layout;
 
 const NormalLoginForm = (props) => {
 	const [form] = Form.useForm();
 	const doLogin = useCallback(() => {
 		authFetch(
 			window.location.protocol +
-				"//" +
-				window.location.hostname +
-				":" +
-				window.location.port +
-				"/login",
+			"//" +
+			window.location.hostname +
+			":" +
+			window.location.port +
+			"/login",
 			{
 				method: "post",
 				headers: {
 					"Content-Type": "application/json",
 				},
 				payload: JSON.stringify(form.getFieldsValue()),
+				doAuth: false
 			},
-			(err, {status}, data) => {
+			(err, { status }, data) => {
 				err && console.error(err);
 				if (status === 401) {
 					message.warning(
 						"Login failed, please check your username and password!"
 					);
 				} else {
-					localStorage.setItem("jwt", JSON.parse(data.toString()).token);
+					localStorage.setItem("jwt", data.token);
 					window.location.reload();
 				}
 			}
@@ -44,9 +45,9 @@ const NormalLoginForm = (props) => {
 	}
 
 	return (
-		<Layout style={{height: "100%"}}>
+		<Layout style={{ height: "100%" }}>
 			<Content>
-				<Row justify="center" align="middle" style={{height: "100%"}}>
+				<Row justify="center" align="middle" style={{ height: "100%" }}>
 					<Col span={12}>
 						<Form
 							form={form}
@@ -55,7 +56,7 @@ const NormalLoginForm = (props) => {
 							initialValues={{
 								remember: true,
 							}}
-							// onFinish={onFinish}
+						// onFinish={onFinish}
 						>
 							<Form.Item
 								name="username"

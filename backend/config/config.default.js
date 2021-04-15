@@ -30,6 +30,13 @@ module.exports = (appInfo) => {
 		logger: {
 			dir: path.join(__dirname, "../logs"),
 		},
+		cluster: {
+			listen: {
+				path: '',
+				port: 7001,
+				hostname: '0.0.0.0',
+			}
+		},
 		mongoose: {
 			client: {
 				url: "mongodb://localhost:27017/reservation",

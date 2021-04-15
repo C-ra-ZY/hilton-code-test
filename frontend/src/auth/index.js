@@ -1,6 +1,6 @@
-import React, {useState, useCallback, useReducer} from "react";
+import React from "react";
 import jwt_decode from "jwt-decode";
-import {Redirect} from "react-router-dom";
+import { Redirect } from "react-router-dom";
 const Auth = (Component) => {
 	return () => {
 		let jwt = localStorage.getItem("jwt");
@@ -9,7 +9,7 @@ const Auth = (Component) => {
 };
 
 export const parseJwt = (jwtToken) => {
-	let jwtObj = {};
+	let jwtObj;
 	try {
 		jwtObj = jwt_decode(jwtToken);
 	} catch (err) {

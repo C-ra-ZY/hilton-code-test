@@ -13,4 +13,5 @@ module.exports = (app) => {
 	router.post("/user", controller.user.create);
 	router.put("/user", app.jwt, controller.user.update);
 	router.delete("/user", app.jwt, controller.user.delete);
+	router.redirect('/','/index.html')
 };

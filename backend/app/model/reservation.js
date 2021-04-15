@@ -4,14 +4,14 @@ module.exports = (app) => {
 
 	const ReservationSchema = new Schema(
 		{
-			user: {type: Schema.Types.ObjectId, ref: "User"},
-			contactInfo: {type: String},
-			guestName: {type: String},
-			arrivalTime: {type: Date},
-			tableSet: {type: Number},
-			status: {type: String},
+			user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+			contactInfo: { type: String, required: true },
+			guestName: { type: String, required: true },
+			arrivalTime: { type: Date, required: true },
+			tableSize: { type: Number, required: true },
+			status: { type: String, required: true },
 		},
-		{collection: "reservation"}
+		{ collection: "reservation" }
 	);
 
 	return mongoose.model("Reservation", ReservationSchema);
