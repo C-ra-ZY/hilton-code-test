@@ -5,7 +5,8 @@
 $ cd frontend
 $ npm i
 $ npm run build
-$ cp -r build/* ../backend/app/public/*
+$ rm -rf ../backend/app/public/*
+$ cp -r build/* ../backend/app/public/
 ```
 
 ### start locally
@@ -20,11 +21,14 @@ $ open http://localhost:7001/
 ### start from docker
 ```bash
 $ cd backend
-$ zip source.zip app config .autod.conf.js app.js index.js jsconfig.json package.json
+$ zip -r source.zip app config .autod.conf.js app.js index.js jsconfig.json package.json
 $ docker build -t hilton-backend .
 $ docker run docker run -d --name mongo -p 27017:27017 mongo:latest
 $ docker run -d --link mongo:mongo -p 7001:7001 hilton-backend
 ```
+
+**docker build may failed due to it contains "npm install" which would throw network exception. docker build is repeatable, it your failed, please try again.**
+
 ### unit test (after install dependencies)
 ```bash
 $ cd backend

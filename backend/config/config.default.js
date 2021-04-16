@@ -23,7 +23,10 @@ module.exports = (appInfo) => {
 	const userConfig = {
 		// myAppName: 'egg',
 	};
-
+	let mongoUrl = "mongodb://localhost:27017/reservation"
+	if (process.env.IS_DOCKER) {
+		mongoUrl = "mongodb://mongo:27017/reservation"
+	}
 	return {
 		...config,
 		...userConfig,
@@ -39,7 +42,7 @@ module.exports = (appInfo) => {
 		},
 		mongoose: {
 			client: {
-				url: "mongodb://localhost:27017/reservation",
+				url: mongoUrl,
 				options: {},
 				// mongoose global plugins, expected a function or an array of function and options
 				// plugins: [createdPlugin, [updatedPlugin, pluginOptions]],

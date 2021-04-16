@@ -46,7 +46,15 @@ const LoadMoreList = () => {
 				title: 'Guest Name',
 				dataIndex: 'guestName',
 				key: 'guestName',
-				sorter: true,
+				sorter: (a, b) => {
+					if (a.guestName < b.guestName) {
+						return -1;
+					}
+					if (a.guestName > b.guestName) {
+						return 1;
+					}
+					return 0;
+				},
 				width: '20%',
 			},
 			{
@@ -54,21 +62,29 @@ const LoadMoreList = () => {
 				dataIndex: 'arrivalTime',
 				key: 'arrivalTime',
 				render: (arrivalTime) => new moment(arrivalTime).format("yyyy-MM-DD HH:mm"),
-				sorter: true,
+				sorter: (a, b) => moment(a.arrivalTime) - moment(b.arrivalTime),
 				width: '20%',
 			},
 			{
 				title: 'Table Size',
 				dataIndex: 'tableSize',
 				key: 'tableSize',
-				sorter: true,
+				sorter: (a, b) => a.tableSize - b.tableSize,
 				width: '20%',
 			},
 			{
 				title: 'Status',
 				dataIndex: 'status',
 				key: 'status',
-				sorter: true,
+				sorter: (a, b) => {
+					if (a.status < b.status) {
+						return -1;
+					}
+					if (a.status > b.status) {
+						return 1;
+					}
+					return 0;
+				},
 				width: '20%',
 			},
 			{
