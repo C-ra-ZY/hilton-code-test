@@ -32,7 +32,7 @@ $ docker run -d --link mongo:mongo -p 7001:7001 hilton-backend
 ### account
 employee: 
     username: admin
-    passwrod: admin
+    password: admin
 
 guest: please register you account
 
