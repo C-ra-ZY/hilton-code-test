@@ -29,6 +29,13 @@ $ docker run -d --link mongo:mongo -p 7001:7001 hilton-backend
 
 **docker build may failed due to it contains "npm install" which would throw network exception. docker build is repeatable, it your failed, please try again.**
 
+### account
+employee: 
+    username: admin
+    passwrod: admin
+
+guest: please register you account
+
 ### unit test (after install dependencies)
 ```bash
 $ cd backend
