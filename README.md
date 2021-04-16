@@ -17,6 +17,7 @@ $ npm i
 $ npm run dev
 $ open http://localhost:7001/
 ```
+**if you choose to start project from disk, please pre-install a mongo instance and using port: 27017 without auth. or you can use mongo running in docker: docker run docker run -d --name mongo -p 27017:27017 mongo:latest**
 
 ### start from docker
 ```bash
