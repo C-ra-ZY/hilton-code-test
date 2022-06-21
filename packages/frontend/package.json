@@ -159,5 +159,10 @@
   },
   "devDependencies": {
     "dotenv-cli": "^4.0.0"
-  }
+  },
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }

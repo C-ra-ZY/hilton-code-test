@@ -24,7 +24,7 @@ $ open http://localhost:7001/
 $ cd backend
 $ zip -r source.zip app config .autod.conf.js app.js index.js jsconfig.json package.json
 $ docker build -t hilton-backend .
-$ docker run docker run -d --name mongo -p 27017:27017 mongo:latest
+$ docker run -d --name mongo -p 27017:27017 mongo:latest
 $ docker run -d --link mongo:mongo -p 7001:7001 hilton-backend
 ```
 
